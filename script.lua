@@ -1,1 +1,108 @@
-local _a=game:GetService(string.char(80,108,97,121,101,114,115))local _b=_a.LocalPlayer local _c=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,48,57,53,55,48,56)local _d=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,48,49,56,53,49,54,57,54)local _e=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,49,48,49,56,53,49,50,53,52)local _f=Color3.fromRGB(64,64,64)local function _g(_h)local _i=_h:FindFirstChild(string.char(102,97,99,101))if _i then _i:Destroy()end end local function _j(_h)if not _h then return end _h.Transparency=1 _h.CanCollide=false _g(_h)local _k=Instance.new(string.char(83,112,101,99,105,97,108,77,101,115,104))_k.MeshType=Enum.MeshType.FileMesh _k.MeshId=_c _k.Scale=Vector3.new(0.001,0.001,0.001)_k.Parent=_h _h:GetPropertyChangedSignal(string.char(84,114,97,110,115,112,97,114,101,110,99,121)):Connect(function()if _h.Transparency~=1 then _h.Transparency=1 end end)_h.ChildAdded:Connect(function(_l)if _l.Name==string.char(102,97,99,101)and _l:IsA(string.char(68,101,99,97,108))then _l:Destroy()end end)end local function _m(_n)local _o=_n:FindFirstChild(string.char(82,105,103,104,116,32,76,101,103))if not _o then return end for _p,_l in ipairs(_o:GetChildren())do if _l:IsA(string.char(83,112,101,99,105,97,108,77,101,115,104))or _l:IsA(string.char(67,104,97,114,97,99,116,101,114,77,101,115,104))then _l:Destroy()end end _o.Color=_f _o:GetPropertyChangedSignal(string.char(67,111,108,111,114)):Connect(function()if _o.Color~=_f then _o.Color=_f end end)local _k=Instance.new(string.char(83,112,101,99,105,97,108,77,101,115,104))_k.MeshType=Enum.MeshType.FileMesh _k.MeshId=_d _k.TextureId=_e _k.Scale=Vector3.new(1,1,1)_k.Parent=_o end local function _q(_n)local _r=_n:FindFirstChild(string.char(82,105,103,104,116,85,112,112,101,114,76,101,103))local _s=_n:FindFirstChild(string.char(82,105,103,104,116,76,111,119,101,114,76,101,103))local _t=_n:FindFirstChild(string.char(82,105,103,104,116,70,111,111,116))if _r and _s and _t then _s.Transparency=1 _t.Transparency=1 _r.MeshId=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,57,48,50,57,52,50,48,57,54)_r.TextureId=string.char(114,98,120,97,115,115,101,116,105,100,58,47,47,57,48,50,56,52,51,51,57,56)_r.Color=Color3.new(1,1,1)_r.Transparency=0 end end local function _u()local _n=_b.Character if not _n then return end local _v=_n:FindFirstChildOfClass(string.char(72,117,109,97,110,111,105,100))if not _v then return end local _h=_n:FindFirstChild(string.char(72,101,97,100))if _h then _j(_h)end if _v.RigType==Enum.HumanoidRigType.R15 then _q(_n)else _m(_n)end end _b.CharacterAdded:Connect(_u)task.spawn(function()while true do if _b.Character then _u()end task.wait(0.5)end end)
+--[[
+    FAKE KORBLOX + HEADLESS (Lokalny skrypt)
+    Działa tylko na Twoim ekranie. Inni gracze widzą Cię normalnie.
+    Obsługuje R6 i R15.
+]]
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ID assetów dla efektów
+local HEADLESS_MESH_ID = "rbxassetid://1095708"        -- Niewidzialna głowa
+local KORBLOX_MESH_ID = "rbxassetid://101851696"       -- Noga Korblox
+local KORBLOX_TEXTURE_ID = "rbxassetid://101851254"    -- Tekstura nogi
+local DARK_GREY = Color3.fromRGB(64, 64, 64)           -- Kolor nogi
+
+-- Funkcja usuwająca decal twarzy
+local function removeFace(head)
+    local face = head:FindFirstChild("face")
+    if face then face:Destroy() end
+end
+
+-- Funkcja nakładająca efekt Headless
+local function applyHeadless(head)
+    if not head then return end
+    head.Transparency = 1
+    head.CanCollide = false
+    removeFace(head)
+
+    local mesh = Instance.new("SpecialMesh")
+    mesh.MeshType = Enum.MeshType.FileMesh
+    mesh.MeshId = HEADLESS_MESH_ID
+    mesh.Scale = Vector3.new(0.001, 0.001, 0.001)
+    mesh.Parent = head
+
+    head:GetPropertyChangedSignal("Transparency"):Connect(function()
+        if head.Transparency ~= 1 then head.Transparency = 1 end
+    end)
+    head.ChildAdded:Connect(function(child)
+        if child.Name == "face" and child:IsA("Decal") then child:Destroy() end
+    end)
+end
+
+-- Funkcja nakładająca efekt Korblox (R6)
+local function applyKorbloxR6(char)
+    local rightLeg = char:FindFirstChild("Right Leg")
+    if not rightLeg then return end
+
+    for _, child in ipairs(rightLeg:GetChildren()) do
+        if child:IsA("SpecialMesh") or child:IsA("CharacterMesh") then
+            child:Destroy()
+        end
+    end
+
+    rightLeg.Color = DARK_GREY
+    rightLeg:GetPropertyChangedSignal("Color"):Connect(function()
+        if rightLeg.Color ~= DARK_GREY then rightLeg.Color = DARK_GREY end
+    end)
+
+    local mesh = Instance.new("SpecialMesh")
+    mesh.MeshType = Enum.MeshType.FileMesh
+    mesh.MeshId = KORBLOX_MESH_ID
+    mesh.TextureId = KORBLOX_TEXTURE_ID
+    mesh.Scale = Vector3.new(1, 1, 1)
+    mesh.Parent = rightLeg
+end
+
+-- Funkcja nakładająca efekt Korblox (R15)
+local function applyKorbloxR15(char)
+    local ru = char:FindFirstChild("RightUpperLeg")
+    local rl = char:FindFirstChild("RightLowerLeg")
+    local rf = char:FindFirstChild("RightFoot")
+
+    if ru and rl and rf then
+        rl.Transparency = 1
+        rf.Transparency = 1
+        ru.MeshId = "rbxassetid://902942096"
+        ru.TextureId = "rbxassetid://902843398"
+        ru.Color = Color3.new(1, 1, 1)
+        ru.Transparency = 0
+    end
+end
+
+-- Główna funkcja aplikująca efekty
+local function applyEffects()
+    local char = player.Character
+    if not char then return end
+
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+
+    local head = char:FindFirstChild("Head")
+    if head then applyHeadless(head) end
+
+    if hum.RigType == Enum.HumanoidRigType.R15 then
+        applyKorbloxR15(char)
+    else
+        applyKorbloxR6(char)
+    end
+end
+
+-- Uruchom przy odrodzeniu i co 0.5s (na wypadek resetu)
+player.CharacterAdded:Connect(applyEffects)
+task.spawn(function()
+    while true do
+        if player.Character then applyEffects() end
+        task.wait(0.5)
+    end
+end)
